@@ -191,7 +191,7 @@ model = dict(
             pc_range=point_cloud_range))))
 
 dataset_type = 'CustomNuScenesLocalMapDataset'
-data_root = 'data/nuscenes/'
+data_root = '/media/ftp/perception/siyuan/Data/OpenSource/nuScenes/v1.0/'
 file_client_args = dict(backend='disk')
 
 
