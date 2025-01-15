@@ -4,20 +4,16 @@ import os
 import shutil
 import torch
 import warnings
-from mmcv import Config, DictAction
-from mmcv.cnn import fuse_conv_bn
-from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
-from mmcv.runner import (get_dist_info, init_dist, load_checkpoint,
+from mmcv.utils.config import Config
+from mmcv.parallel import MMDataParallel
+from mmcv.runner import (load_checkpoint,
                          wrap_fp16_model)
-from mmdet3d.utils import collect_env, get_root_logger
-from mmdet3d.apis import single_gpu_test
+from mmdet3d.utils import get_root_logger
 from mmdet3d.datasets import build_dataset
 from projects.mmdet3d_plugin.datasets.builder import build_dataloader
 from mmdet3d.models import build_model
-from mmdet.apis import set_random_seed
 from projects.mmdet3d_plugin.bevformer.apis.test import custom_multi_gpu_test
 from mmdet.datasets import replace_ImageToTensor
-import time
 import os.path as osp
 import numpy as np
 from PIL import Image

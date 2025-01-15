@@ -12,6 +12,8 @@ RUN apt-get update && \
     python3.8-dev \
     python3.8-distutils \
     curl python3-tk \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # (Optional) Make Python 3.8 your default python
@@ -28,8 +30,6 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
-# Set CUDA_HOME environment variable
-ENV CUDA_HOME=/usr/local/cuda-11.3
 
 # Install the PyTorch family (Torch, Torchvision, Torchaudio) with CUDA 11.3
 # Note the use of the PyTorch extra index URL.
@@ -37,18 +37,19 @@ RUN pip install \
     torch==1.10.0+cu113 \
     torchvision==0.11.0+cu113 \
     torchaudio==0.10.0 \
-    -f https://download.pytorch.org/whl/torch_stable.html  -i https://pypi.tuna.tsinghua.edu.cn/simple
+    -f https://download.pytorch.org/whl/torch_stable.html
 
 # Install additional deps: mmcv-full, mmdet, mmsegmentation, timm
 RUN pip install \
-    mmcv-full==1.4.0 \
     mmdet==2.14.0 \
     mmsegmentation==0.14.1 \
-    timm==0.9.5
+    timm==0.9.5 \
+    opencv-python-headless av2 networkx==2.3 numpy==1.21.5 setuptools==58.2.0
+RUN pip install mmcv-full==1.4.0 \
+    -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10.0/index.html
 
-RUN pip install opencv-python-headless av2 networkx==2.3 numpy==1.21.5 setuptools==58.2.0
-
-
+# Set CUDA_HOME environment variable
+ENV CUDA_HOME=/usr/local/cuda-11.3
 ENV PATH=${CUDA_HOME}/bin:${PATH}
 ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 ENV CPATH=${CUDA_HOME}/include:${CPATH}
@@ -61,14 +62,13 @@ RUN pip install -r requirements.txt
 RUN pip install -v -e .
 # RUN rm -rf /opt/maptr
 
-# 安装 maptr 相关的插件
-WORKDIR /opt/maptr/projects/mmdet3d_plugin/maptr/modules/ops/geometric_kernel_attn
-RUN python setup.py build install
-
-# 终端显示安装信息（根据您的描述，这一步会自动完成）
-# Processing dependencies for GeometricKernelAttention==1.0
-# Finished processing dependencies for GeometricKernelAttention==1.0
-
-# By default, run bash if someone logs in
-
+RUN pip install numpy==1.21.5 yapf==0.31.0
 CMD ["/bin/bash"]
+
+# docker run --gpus all -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all --network=host -v /media/ftp:/media/ftp -itd --name maptr_nv maptr
+# docker exec -it maptr_nv /bin/bash
+# 安装 maptr 相关的插件
+# cd /opt/maptr/projects/mmdet3d_plugin/maptr/modules/ops/geometric_kernel_attn
+# python setup.py build install
+# cd /opt/maptr/
+# PYTHONPATH=$(pwd) python tools/maptr/vis_pred.py projects/configs/maptr/maptr_tiny_r50_24e.py ckpts/maptr_tiny_r50_24e.pth --show-dir ./vis_dir
