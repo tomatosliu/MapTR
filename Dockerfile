@@ -20,10 +20,10 @@ RUN apt-get update && \
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
 
 
-# Set proxy variables for Oasa env
-ENV HTTP_PROXY=http://192.168.1.181:7890
-ENV HTTPS_PROXY=http://192.168.1.181:7890
-ENV EXPORT_ALL_PROXY=socks5://192.168.1.181:7890
+# <Optional> Set VPN proxy variables
+# ENV HTTP_PROXY=http://192.168.1.181:7890
+# ENV HTTPS_PROXY=http://192.168.1.181:7890
+# ENV EXPORT_ALL_PROXY=socks5://192.168.1.181:7890
 
 # Install pip for Python 3.8
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
